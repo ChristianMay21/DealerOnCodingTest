@@ -16,7 +16,8 @@ class Terminal extends React.Component {
             input: "",
             lines: [], //does not include currentLine
             currentLine: "",
-            cursorPosition: 0 //number of positions back the cursor is relative to the end of the line
+            cursorPosition: 0, //number of positions back the cursor is relative to the end of the line
+            commandNum: 1, //which line of user-input commands we're on
         }
     }
 
@@ -73,15 +74,37 @@ class Terminal extends React.Component {
         }
     }
 
-    handleEnter = () => {
+    spawnRobot = (data) => {
+        
+    }
 
+    handleEnter = () => {
+        console.log(this.state.currentLine)
+        if (this.state.commandNum === 1) {
+            if (!/\d \d/.test(this.state.currentLine)) {
+                this.invalidInput('invalid format. Line should be of format "# #"')
+            }
+        } else if ((this.state.commandNum - 1) % 2 === 1) {//position and heading line
+            if (!/\d \d [NSEW]/.test(this.state.currentLine)) {
+                this.invalidInput('invalid format. Line should be of format "# # N/S/E/W"')
+            }
+        } else {
+            if (!/^[MLR]*$/.test(this.state.currentLine)) {//movement instructions
+                this.invalidInput('invalid format. Line should be of format "MRLLR..."')
+            }
+        }
+    }
+
+    invalidInput = (data) => {
+        console.error(data)
     }
 
     componentDidMount() {
         this.writeln("NASA Rover Mission Console: Version 12.3.46");
         this.writeln("(c) National Aeronautics and Space Administration. All rights reserved.")
         this.writeln(" ")
-        this.writeln("Please input Rover instructions, one line at a time. When you are done, press the down arrow to see output of final results. ")
+        this.writeln("Please input Rover instructions, one line at a time. When you are done, press ")
+        this.writeln("the down arrow to see output of final results.")
     }
 
     render() {

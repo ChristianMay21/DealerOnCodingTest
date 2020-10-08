@@ -1,6 +1,7 @@
 import React from 'react';
 import './Map.css'
 import MapItem from './MapItem'
+import Rover from './Rover'
 
 class Map extends React.Component {
     render() {
@@ -16,7 +17,7 @@ class Map extends React.Component {
         let cells = []
         let c, r;
         c = r = 0;
-        console.log(c)
+
         while (c < this.props.width) {
             while (r < this.props.height) {
                 console.log('pushing')
@@ -26,13 +27,16 @@ class Map extends React.Component {
             r = 0;
             c += 1;
         }
-        console.log(cells)
-        console.log(cells.length)
+
+        
         return (
 
                 <div className="map-container" style={container_styles}>
                     <div className="Map" style={grid_styles}>
                         {cells}
+                    </div>
+                    <div className = "rovers">
+
                     </div>
                 </div>
         );
