@@ -86,9 +86,10 @@ class Terminal extends React.Component {
 
     render() {
         return (
-            <div className="terminal">
-                <div className='commandHeader'>Rover Command Console</div>
-                <div className='terminal-container'>
+
+            <div className='terminal-container'>
+                <div className="terminal">
+                    <div className='commandHeader'>Rover Command Console</div>
                     <XTerm
                         ref={this.xtermRef}
                         onData={(data) => {
@@ -113,14 +114,15 @@ class Terminal extends React.Component {
                         }
                         }
                     />
-                    <div className='code-format'>
-                        <div className='format-header'>CODE FORMATTING:</div>
-                        <div className='format-element'>First row: Dimensions of grid. E.g. 5 5</div>
-                        <div className='format-element'>Second row: position and heading of rover. E.g. 1 2 N</div>
-                        <div className='format-element'>Third row: Movement instructions. E.g. LMLMLMLMLMM</div>
-                        <div className='format-element'>Repeat second and third rows for additional rovers</div>
-                        <div className='format-element'>Press down arrow for final results when complete</div>
-                    </div>
+                </div>
+                <div className='code-format'>
+                    <div className='format-header'>CODE FORMATTING:</div>
+                    <div className='format-element'>Did you happen to forget the formatting? Here's a refresher</div>
+                    <div className='format-element'>First row: Dimensions of grid. E.g. <span className='code'>5 5</span></div>
+                    <div className='format-element'>Second row: position and heading of rover. E.g. <span className='code'>1 2 N</span></div>
+                    <div className='format-element'>Third row: Movement instructions. E.g. <span className='code'>LMLMLMLMLMM</span></div>
+                    <div className='format-element'>Repeat second and third rows for additional rovers</div>
+                    <div className='format-element'>Press down arrow for final results when complete</div>
                 </div>
             </div>
         );
