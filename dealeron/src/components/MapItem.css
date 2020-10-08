@@ -1,0 +1,8 @@
+.MapItem {
+    background-image: url("../assets/martian_tile.svg");
+    background-color: #c1440e;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    margin: 1px;
+}
