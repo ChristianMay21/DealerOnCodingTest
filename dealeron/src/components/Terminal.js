@@ -18,14 +18,14 @@ class Terminal extends React.Component {
 
         this.state = {
             input: "",
-            lines: [], //does not include currentLine
+            lines: [], //saved version of all lines on terminal, in order to handle backspacing: does not include currentLine
             currentLine: "",
             cursorPosition: 0, //number of positions back the cursor is relative to the end of the line
-            commandNum: 1, //which line of user-input commands we're on
+            commandNum: 1, //used to keep track of what kind of input the terminal should expect: grid size, rover position, or rover movement instructions
         }
     }
  
-    nextLine = () => {
+    nextLine = () => {//saves current line to terminal and 
         this.setState((prevState, props) => ({
             lines: [...prevState.lines, this.state.currentLine]
         }));
@@ -55,14 +55,14 @@ class Terminal extends React.Component {
         }
     }
 
-    writeln = (data) => {
+    writeln = (data) => {//writes a line to terminal and saves it to state- wrapper function for terminal's writeline function
         this.setState((prevState, props) => ({
             lines: [...prevState.lines, data]
         }));
         this.xtermRef.current.terminal.writeln(data)
     }
 
-    write = (data) => {
+    write = (data) => {//wrapper to write to terminal's current line and save to state
         this.setState((prevState, props) => (
             { currentLine: prevState.currentLine + data }
         ));
@@ -87,8 +87,7 @@ class Terminal extends React.Component {
         }
     }
 
-    handleDownArrow = () => {
-        console.log('locationLog:', this.props.locationLog)
+    handleDownArrow = () => {//down arrow is used to request rover results: this prints those results to the command line
         this.nextLine()
         this.writeln('results: ')
         for (const loc of this.props.locationLog) {
@@ -96,23 +95,22 @@ class Terminal extends React.Component {
         }
     }
 
-    incrementCommandNum = () => {
+    incrementCommandNum = () => { //increments commandNum - generally executed after receiving valid input
         this.setState((prevState, props) => ({
             commandNum: prevState.commandNum + 1
         }));
     }
 
-    handleGridSize = (data) => {
+    handleGridSize = (data) => { //handles grid size input, passing it to App with the props function
         const [COLS, ROWS] = data.split(" ").map((chars) => parseInt(chars) + 1)
         num_cols = COLS
         num_rows = ROWS
-        console.log('cols, rows: ', num_cols, num_rows)
         this.props.createGrid(COLS, ROWS)
         this.incrementCommandNum()
         this.nextLine()
     }
 
-    handleLocation = (data) => {
+    handleLocation = (data) => { //handles rover location input, passing it to App with the props function
         const EAST_COORD = parseInt(data.split(" ")[0])
         const NORTH_COORD = parseInt(data.split(" ")[1])
         const HEADING = data.split(" ")[2]
@@ -123,17 +121,15 @@ class Terminal extends React.Component {
             this.incrementCommandNum()
             this.nextLine()
         }
-
     }
 
-    handleMovement = (data) => {
+    handleMovement = (data) => {//passes movement data to parent and executes some internal logic
         this.props.moveRover(data)
         this.incrementCommandNum()
         this.nextLine()
     }
 
-    handleEnter = () => {
-        console.log(this.state.currentLine)
+    handleEnter = () => {//handles submission of instructions - uses regex to validate input, throwing errors for invalid input, and passes input to appropriate function
         if (this.state.commandNum === 1) {
             if (!/\d+ \d+/.test(this.state.currentLine)) {
                 this.invalidInput('invalid format. Line should be of format "# #"')
@@ -155,12 +151,12 @@ class Terminal extends React.Component {
         }
     }
 
-    invalidInput = (data) => {
+    invalidInput = (data) => {//takes error text and throws an error in the terminal
         this.nextLine()
         this.writeln("Error: " + data + " Try again.")
     }
 
-    componentDidMount() {
+    componentDidMount() { //prints initial terminal text, since the XTerm component renders blank by default
         this.writeln("NASA Rover Mission Console: Version 12.3.46");
         this.writeln("(c) National Aeronautics and Space Administration. All rights reserved.")
         this.writeln(" ")
@@ -178,11 +174,11 @@ class Terminal extends React.Component {
                         ref={this.xtermRef}
                         onData={(data) => {
                             const code = data.charCodeAt(0);
-                            if (code === 13 && this.state.input.length > 0) {
+                            if (code === 13 && this.state.input.length > 0) { //enter detected
                                 this.handleEnter()
-                            } else if (code === 127 && this.state.input.length > 0) {
+                            } else if (code === 127 && this.state.input.length > 0) { //backspace detected
                                 this.handleBackspace()
-                            } else if (code === 27) {
+                            } else if (code === 27) { //all arrows have the same keycode, so we have to narrow them down with their data attribute
                                 if (data === LEFT_ARROW) {
                                     this.moveCursorLeft()
                                 } else if (data === RIGHT_ARROW) {

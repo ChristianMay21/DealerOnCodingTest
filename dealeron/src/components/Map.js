@@ -14,6 +14,7 @@ class Map extends React.Component {
         }
     }
 
+    //This function and the one below it are largely an artifact of efforts to make the application completely responsive, 
     changeWidth = () => {
         this.setState({map_width: window.innerWidth-675})
     }
@@ -26,12 +27,12 @@ class Map extends React.Component {
 
     render() {
         let container_styles = {}
-        let grid_styles = {
+        let grid_styles = { //dynamically generated styles for the css grid, to resize based on terminal input
             gridTemplateColumns: "auto ".repeat(this.props.width).slice(0, -1),
             gridTemplateRows: "auto ".repeat(this.props.height).slice(0, -1)
         }
-
-        if (this.props.height > this.props.width) { //'tall' grid: shrink width   
+        //if/else clause is to resize the grid depending on terminal input, to make sure that the grid does not overflow its container
+        if (this.props.height > this.props.width) { //'tall' grid: shrink width    
             grid_styles.width = `${(this.props.width/this.props.height)*90}vh`
             container_styles.width = grid_styles.width;
 
@@ -43,7 +44,7 @@ class Map extends React.Component {
         let c, r;
         c = r = 0;
 
-        while (c < this.props.width) {
+        while (c < this.props.width) { //this loop generates grid items. TODO: change to a for loop, not sure why I used a while loop here
             while (r < this.props.height) {
                 cells.push(<MapItem key={[c, r]} east={c} north={r} />)
                 r += 1;
@@ -54,7 +55,6 @@ class Map extends React.Component {
 
 
         return (
-
             <div className="map-container" style={container_styles}>
                 <div className="Map" style={grid_styles}>
                     {cells}

@@ -14,7 +14,7 @@ class Rover extends React.Component {
         E: east,
         W: west
     }
-    let styles = {
+    let styles = { //sets styles based on rover's position and heading
         gridColumn: this.props.col+1,
         gridRow: -1*(this.props.row+2),
         backgroundImage: `url(${bgImages[this.props.direction]}`

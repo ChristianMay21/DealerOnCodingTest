@@ -17,21 +17,21 @@ class App extends React.Component {
       locationLog: []
     }
   }
-  createGrid = (cols, rows) => {
+  createGrid = (cols, rows) => {//sets grid size
     this.setState({
       width: cols,
       height: rows
     })
   }
 
-  createRover = (roverLocation) => {
+  createRover = (roverLocation) => {//spawns a new rover
     movements.push(() => {
       this.setState({ movePath: "" })
       this.setState({ roverLocation: roverLocation })
     })
   }
 
-  leftTurn = (direction) => {
+  leftTurn = (direction) => {//makes rover turn left
     const turnMap = {
       'N': 'W',
       'W': 'S',
@@ -41,7 +41,7 @@ class App extends React.Component {
     return turnMap[direction]
   }
 
-  rightTurn = (direction) => {
+  rightTurn = (direction) => {//makes rover turn right
     const turnMap = {
       'N': 'E',
       'E': 'S',
@@ -51,7 +51,46 @@ class App extends React.Component {
     return turnMap[direction]
   }
 
-  modifyRoverPosition = (char) => {
+  moveRoverForward = () => { //makes rover go forward
+    switch (this.state.roverLocation[2]) {
+      case 'N':
+        if (this.state.roverLocation[1] < this.state.height - 1) { //do not allow rover to exit the grid
+          this.setState((prevState, props) => ({
+            roverLocation: [prevState.roverLocation[0], prevState.roverLocation[1] + 1, prevState.roverLocation[2]]
+          }))
+        }
+        break;
+
+      case 'E':
+        if (this.state.roverLocation[0] < this.state.width - 1) {//do not allow rover to exit the grid
+          this.setState((prevState, props) => ({
+            roverLocation: [prevState.roverLocation[0] + 1, prevState.roverLocation[1], prevState.roverLocation[2]]
+          }))
+        }
+        break;
+
+      case 'S':
+        if (this.state.roverLocation[1] > 0) {//do not allow rover to exit the grid
+          this.setState((prevState, props) => ({
+            roverLocation: [prevState.roverLocation[0], prevState.roverLocation[1] - 1, prevState.roverLocation[2]]
+          }))
+        }
+        break;
+
+      case 'W':
+        if (this.state.roverLocation[0] > 0) {//do not allow rover to exit the grid
+          this.setState((prevState, props) => ({
+            roverLocation: [prevState.roverLocation[0] - 1, prevState.roverLocation[1], prevState.roverLocation[2]]
+          }))
+        }
+        break;
+      default:
+        break;
+
+    }
+  }
+
+  modifyRoverPosition = (char) => {//parses rover movement instructions
     if (char === 'L') {
       this.setState((prevState, props) => ({
         roverLocation: [prevState.roverLocation[0], prevState.roverLocation[1], this.leftTurn(prevState.roverLocation[2])]
@@ -61,69 +100,29 @@ class App extends React.Component {
         roverLocation: [prevState.roverLocation[0], prevState.roverLocation[1], this.rightTurn(prevState.roverLocation[2])]
       }))
     } else if (char === 'M') {
-      switch (this.state.roverLocation[2]) {
-        case 'N':
-          if (this.state.roverLocation[1] < this.state.height - 1) {
-            this.setState((prevState, props) => ({
-              roverLocation: [prevState.roverLocation[0], prevState.roverLocation[1] + 1, prevState.roverLocation[2]]
-            }))
-          }
-          break;
-
-        case 'E':
-          if (this.state.roverLocation[0] < this.state.width - 1) {
-            console.log('updating rover position')
-            this.setState((prevState, props) => ({
-              roverLocation: [prevState.roverLocation[0] + 1, prevState.roverLocation[1], prevState.roverLocation[2]]
-            }))
-          }
-          break;
-
-        case 'S':
-          if (this.state.roverLocation[1] > 0) {
-            this.setState((prevState, props) => ({
-              roverLocation: [prevState.roverLocation[0], prevState.roverLocation[1] - 1, prevState.roverLocation[2]]
-            }))
-          }
-          break;
-
-        case 'W':
-          if (this.state.roverLocation[0] > 0) {
-            this.setState((prevState, props) => ({
-              roverLocation: [prevState.roverLocation[0] - 1, prevState.roverLocation[1], prevState.roverLocation[2]]
-            }))
-          }
-          break;
-        default:
-          break;
-
-      }
+      this.moveRoverForward()
     }
   }
 
-  logRoverPosition = () => {
-    console.log('logging position')
+  logRoverPosition = () => {//once the rover is done moving, this function is called, adding its position to the list of positions that will eventually be printed in the terminal
     this.setState((prevState, props) => ({
       locationLog: [...prevState.locationLog,this.state.roverLocation]
     }));
   }
 
   processOneMovement = () => {
-    console.log('looking at movement queue')
     if (movements.length !== 0) {
-      console.log('executing an action!')
       movements[0]()
       movements.shift();
     }
   }
 
-  moveRover = (data) => {
+  moveRover = (data) => {//adds one single movement instruction to movement queue
     let counter = 1;
 
     for (let char of data) {
       movements.push(() => { this.modifyRoverPosition(char) })
       if (counter === data.length) {
-        console.log('queueing position log')
         movements.push(() => { this.logRoverPosition() })
       }
       counter ++;
@@ -131,7 +130,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(this.processOneMovement, 1000)
+    setInterval(this.processOneMovement, 1000) //sets a heartbeat that constantly checks for movements - this is to ensure that movements happen slowly enough to see the rover moving along the grid
   }
 
   render() {
