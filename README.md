@@ -27,6 +27,10 @@ This part wasn't necessarily hard - but it was a lot of work. I had to basically
 ## What I would do if I had more time
 Since this was just a basic test project for potential hires, it didn't make sense to track down every single edge case and polish every single piece - after some hard work, you hit diminishing returns, and it would have been a week until the employer heard back from me. So there's a couple things I couldn't polish that I wish I could have:
 
+- 'Reactify' more things. There are a couple of small UI elements that probably could have been made their own components but were not. Also, right now components contain both form and function - it's a better practice to separate the logic into control components. 
+
+- Add Redux. There's a lot of communication between sibling components in this application - with vanilla React, the parent component has to act as an intermediary. That's a very good use case for Redux, and adding it would have made the code that much cleaner. 
+
 - Responsiveness. I actually spent a few hours on this, making the Rover Map dynamically shrink as the page size changed, but I couldn't easily control the third-party styling of the terminal, which created a lot of issues as the page or grid size changed, so I cut my losses and moved on.
 
 - Move everything over to Typescript. This was DealerOn's preference, but unfortunately I ran into a lot of weird configuration issues as soon as I started trying to use Typescript instead of Javascript. Fixing it would have required some changes to the Webpack config, which apparently create-react-app does not let me do. It looked like a big rabbit hole to solve a relatively small problem, given that Typescript is a superset of Javascript, and one that wouldn't have proven all that much about me as a developer.

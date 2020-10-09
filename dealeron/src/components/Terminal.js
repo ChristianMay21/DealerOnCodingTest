@@ -204,7 +204,7 @@ class Terminal extends React.Component {
                     <div className='format-element'><span className="format-subheader">Second row:</span> position and heading of rover. E.g. <span className='code'>1 2 N</span></div>
                     <div className='format-element'><span className="format-subheader">Third row:</span> Movement instructions. E.g. <span className='code'>LMLMLMLMM</span></div>
                     <div className='format-element'>Repeat second and third rows for additional rovers</div>
-                    <div className='format-element'>Press down arrow for final results when complete</div>
+                    <div className='format-element'>Press the down arrow for final results when complete</div>
                 </div>
             </div>
         );
